@@ -39,3 +39,31 @@ Opciones: None, Claude Code, Codex, Gemini, Cursor, VS Code. Descarto todas de m
 Por qué: Quiero crear mi propio CLAUDE.md y entender las reglas que utiliza Claude en el proyecto. Prefiero incorporar herramientas adicionales cuando exista un problema concreto que justifique utilizarlas.
 
 Riesgo o pendiente: Tendré que redactar y revisar el CLAUDE.md con ayuda, incluyendo el objetivo del proyecto, el stack, las comprobaciones y las reglas de trabajo. Sin la integración automática, no tendré configurado desde el principio el MCP de Angular para consultar su documentación y herramientas.
+
+## Navegación
+
+Decisión: Dejar fuera de la v1 la barra inferior («Inicio», «Cuadrícula», «Más») y el icono de Ajustes.
+
+Por qué: Prevlio tendrá una sola pantalla. Añadiré navegación cuando existan nuevas pantallas que la necesiten.
+
+## Avisos
+
+Decisión: Mostrar los avisos debajo del encabezado, apilados si aparecen a la vez. Se van cuando la persona los cierra, con un botón × de al menos 44 px. 
+
+Por qué: Los avisos estarán siempre en el mismo sitio. El verde indicará las fotos añadidas correctamente y el rojo, los archivos rechazados, con mensajes que expliquen qué ha ocurrido.
+
+Decisión: Si hay avisos abiertos y se añaden fotos, los nuevos sustituyen a los anteriores.
+
+Por qué:  Si no se cierran los avisos que ya están y alguien sigue subiendo fotos, que salgan más es molesto.
+
+## Botón «Añadir fotos»
+
+Decisión: Cuando no haya fotos, mostrar el botón en el centro de la pantalla. Cuando ya haya fotos, poner un botón + arriba a la derecha.
+
+Por qué: Destaca la acción principal en la pantalla vacía y permite añadir más fotos después sin quitar espacio al feed.
+
+## Diseño
+
+Decisión: Variante A, en blanco y negro y fiel al boceto.
+
+Por qué: Es la que sigue mi guía minimalista.
