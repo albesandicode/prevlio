@@ -1,4 +1,4 @@
-import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { PhotoStore } from './photo-store';
 
 type NoticeType = 'success' | 'error';
@@ -20,11 +20,8 @@ export class App {
   private nextNoticeId = 0;
 
   protected readonly photoCount = this.photoStore.count;
+  protected readonly photoUrls = this.photoStore.latestFirstUrls;
   protected readonly notices = signal<Notice[]>([]);
-  protected readonly photoCountText = computed(() => {
-    const count = this.photoCount();
-    return count === 1 ? '1 foto en tu feed' : `${count} fotos en tu feed`;
-  });
 
   protected openFilePicker(): void {
     this.fileInput().nativeElement.click();
