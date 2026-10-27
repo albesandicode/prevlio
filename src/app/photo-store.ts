@@ -9,8 +9,16 @@ export interface AddFilesResult {
 @Injectable({ providedIn: 'root' })
 export class PhotoStore {
   private readonly photos = signal<File[]>([]);
+  private readonly photoUrls = new Map<File, string>();
 
   readonly count = computed(() => this.photos().length);
+
+  // Most recent first, as Instagram shows the feed.
+  readonly latestFirstUrls = computed(() =>
+    this.photos()
+      .map((file) => this.urlFor(file))
+      .reverse(),
+  );
 
   addFiles(files: File[]): AddFilesResult {
     const added = files.filter((file) => isImage(file));
@@ -21,6 +29,16 @@ export class PhotoStore {
     }
 
     return { added, rejected };
+  }
+
+  // Creates the URL only once per file so the <img> elements keep the same src.
+  private urlFor(file: File): string {
+    let url = this.photoUrls.get(file);
+    if (!url) {
+      url = URL.createObjectURL(file);
+      this.photoUrls.set(file, url);
+    }
+    return url;
   }
 }
 
