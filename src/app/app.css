@@ -147,7 +147,33 @@
   cursor: pointer;
 }
 
-.photo-count {
+/* Photo grid */
+
+.feed-has-photos {
+  justify-content: flex-start;
+  padding: var(--space-m) 0 0;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-gap);
+  width: 100%;
+  max-width: 1400px;
   margin: 0;
-  font-size: var(--font-size-m);
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .photo-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.photo-grid-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }

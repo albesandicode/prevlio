@@ -46,7 +46,7 @@
   }
 </div>
 
-<main class="feed">
+<main class="feed" [class.feed-has-photos]="photoCount() > 0">
   @if (photoCount() === 0) {
     <section class="empty-state">
       <svg
@@ -89,7 +89,13 @@
       </button>
     </section>
   } @else {
-    <p class="photo-count">{{ photoCountText() }}</p>
+    <ul class="photo-grid">
+      @for (url of photoUrls(); track url; let position = $index) {
+        <li>
+          <img class="photo-grid-image" [src]="url" [alt]="'Foto ' + (position + 1) + ' del feed'" />
+        </li>
+      }
+    </ul>
   }
 </main>
 

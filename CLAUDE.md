@@ -33,3 +33,5 @@ Explica los cambios, ejecuta las comprobaciones e indica los errores pendientes.
 No hagas commits ni pushes; los hago yo.
 
 Si una petición contradice DECISIONES.md, explica el conflicto y pregunta antes de actuar.
+
+No modificar tests que ya existen sin pedirlo.
