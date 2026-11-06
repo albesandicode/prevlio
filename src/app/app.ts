@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { PhotoStore } from './photo-store';
 
 type NoticeType = 'success' | 'error';
@@ -22,6 +22,8 @@ export class App {
   protected readonly photoCount = this.photoStore.count;
   protected readonly photoUrls = this.photoStore.latestFirstUrls;
   protected readonly notices = signal<Notice[]>([]);
+  protected readonly selectedUrls = signal<ReadonlySet<string>>(new Set());
+  protected readonly hasSelection = computed(() => this.selectedUrls().size > 0);
 
   protected openFilePicker(): void {
     this.fileInput().nativeElement.click();
@@ -51,6 +53,32 @@ export class App {
     this.notices.set(notices);
   }
 
+  protected isSelected(url: string): boolean {
+    return this.selectedUrls().has(url);
+  }
+
+  protected toggleSelection(url: string): void {
+    // A new Set is created so the signal notices the change.
+    this.selectedUrls.update((selected) => {
+      const next = new Set(selected);
+      if (next.has(url)) {
+        next.delete(url);
+      } else {
+        next.add(url);
+      }
+      return next;
+    });
+  }
+
+  protected deleteSelected(): void {
+    const removedCount = this.photoStore.removePhotos([...this.selectedUrls()]);
+    this.selectedUrls.set(new Set());
+
+    if (removedCount > 0) {
+      this.notices.set([this.createNotice('success', deletedMessage(removedCount))]);
+    }
+  }
+
   protected closeNotice(id: number): void {
     this.notices.update((notices) => notices.filter((notice) => notice.id !== id));
   }
@@ -62,6 +90,10 @@ export class App {
 
 function addedMessage(count: number): string {
   return count === 1 ? '1 foto añadida correctamente' : `${count} fotos añadidas correctamente`;
+}
+
+function deletedMessage(count: number): string {
+  return count === 1 ? 'Foto eliminada' : `${count} fotos eliminadas`;
 }
 
 function rejectedMessage(files: File[]): string {

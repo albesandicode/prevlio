@@ -31,6 +31,26 @@ export class PhotoStore {
     return { added, rejected };
   }
 
+  // Removes the photos shown with the given URLs and releases their object URLs.
+  // The remaining photos keep their order. Returns how many photos were removed.
+  removePhotos(urls: string[]): number {
+    const urlsToRemove = new Set(urls);
+    const removed = this.photos().filter((file) => urlsToRemove.has(this.urlFor(file)));
+
+    if (removed.length === 0) {
+      return 0;
+    }
+
+    this.photos.update((photos) => photos.filter((file) => !removed.includes(file)));
+
+    for (const file of removed) {
+      URL.revokeObjectURL(this.urlFor(file));
+      this.photoUrls.delete(file);
+    }
+
+    return removed.length;
+  }
+
   // Creates the URL only once per file so the <img> elements keep the same src.
   private urlFor(file: File): string {
     let url = this.photoUrls.get(file);
