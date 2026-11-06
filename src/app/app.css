@@ -32,6 +32,11 @@
   font-weight: 700;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
 .icon-button {
   display: inline-flex;
   align-items: center;
@@ -176,4 +181,32 @@
   width: 100%;
   aspect-ratio: 3 / 4;
   object-fit: cover;
+}
+
+.photo-grid-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.photo-check {
+  position: absolute;
+  top: var(--space-s);
+  right: var(--space-s);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-on-primary);
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
 }
