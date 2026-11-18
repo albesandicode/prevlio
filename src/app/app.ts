@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { PhotoStore } from './photo-store';
 
@@ -11,6 +12,7 @@ interface Notice {
 
 @Component({
   selector: 'app-root',
+  imports: [CdkDropList, CdkDrag],
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
@@ -18,6 +20,8 @@ export class App {
   private readonly photoStore = inject(PhotoStore);
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
   private nextNoticeId = 0;
+  // Set when a drag starts so the click fired on release does not toggle the selection.
+  private ignoreNextClick = false;
 
   protected readonly photoCount = this.photoStore.count;
   protected readonly photoUrls = this.photoStore.latestFirstUrls;
@@ -57,7 +61,22 @@ export class App {
     return this.selectedUrls().has(url);
   }
 
+  protected onPhotoDragStarted(): void {
+    this.ignoreNextClick = true;
+  }
+
+  protected onPhotoDropped(event: CdkDragDrop<string[]>): void {
+    this.photoStore.moveInFeed(event.previousIndex, event.currentIndex);
+    // If no click follows the release, stop ignoring clicks after this event loop turn.
+    setTimeout(() => (this.ignoreNextClick = false));
+  }
+
   protected toggleSelection(url: string): void {
+    if (this.ignoreNextClick) {
+      this.ignoreNextClick = false;
+      return;
+    }
+
     // A new Set is created so the signal notices the change.
     this.selectedUrls.update((selected) => {
       const next = new Set(selected);

@@ -181,6 +181,10 @@
   width: 100%;
   aspect-ratio: 3 / 4;
   object-fit: cover;
+  /* Long press starts the drag, so the phone must not open its image menu or select it. */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .photo-grid-button {
@@ -209,4 +213,20 @@
   font-size: 0.875rem;
   font-weight: 700;
   line-height: 1;
+}
+
+/* Reordering photos by dragging */
+
+.cdk-drag-preview {
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+  opacity: 0.9;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating,
+.photo-grid.cdk-drop-list-dragging li:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

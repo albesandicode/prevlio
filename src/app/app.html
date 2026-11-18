@@ -118,9 +118,18 @@
       </button>
     </section>
   } @else {
-    <ul class="photo-grid">
+    <ul
+      class="photo-grid"
+      cdkDropList
+      cdkDropListOrientation="mixed"
+      (cdkDropListDropped)="onPhotoDropped($event)"
+    >
       @for (url of photoUrls(); track url; let position = $index) {
-        <li>
+        <li
+          cdkDrag
+          [cdkDragStartDelay]="{ touch: 300, mouse: 0 }"
+          (cdkDragStarted)="onPhotoDragStarted()"
+        >
           <button
             type="button"
             class="photo-grid-button"

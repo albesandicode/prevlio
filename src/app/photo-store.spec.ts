@@ -84,3 +84,50 @@ describe('PhotoStore removePhotos', () => {
     expect(URL.revokeObjectURL).not.toHaveBeenCalled();
   });
 });
+
+describe('PhotoStore moveInFeed', () => {
+  const originalCreateObjectURL = URL.createObjectURL;
+
+  beforeEach(() => {
+    // jsdom does not implement createObjectURL, so each file gets a fake URL with its name.
+    URL.createObjectURL = vi.fn((file: Blob) => `blob:${(file as File).name}`);
+  });
+
+  afterEach(() => {
+    URL.createObjectURL = originalCreateObjectURL;
+  });
+
+  // Adds the photos in reverse so the feed shows them in the given order.
+  function storeWithFeed(...names: string[]): PhotoStore {
+    const store = TestBed.inject(PhotoStore);
+    const files = names.map((name) => new File([''], name, { type: 'image/jpeg' }));
+    store.addFiles(files.reverse());
+    return store;
+  }
+
+  it('should move the photo at position 0 to position 2', () => {
+    const store = storeWithFeed('a.jpg', 'b.jpg', 'c.jpg', 'd.jpg', 'e.jpg');
+
+    store.moveInFeed(0, 2);
+
+    expect(store.latestFirstUrls()).toEqual([
+      'blob:b.jpg',
+      'blob:c.jpg',
+      'blob:a.jpg',
+      'blob:d.jpg',
+      'blob:e.jpg',
+    ]);
+  });
+
+  it('should not move anything when the position does not exist', () => {
+    const store = storeWithFeed('a.jpg', 'b.jpg', 'c.jpg');
+
+    store.moveInFeed(0, 99);  
+
+    expect(store.latestFirstUrls()).toEqual([
+      'blob:a.jpg',
+      'blob:b.jpg',
+      'blob:c.jpg',
+    ]);
+  });
+});
