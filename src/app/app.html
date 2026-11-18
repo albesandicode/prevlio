@@ -119,9 +119,11 @@
     </section>
   } @else {
     <ul
+      #photoGrid
       class="photo-grid"
       cdkDropList
       cdkDropListOrientation="mixed"
+      (cdkDropListSorted)="onPhotoSorted()"
       (cdkDropListDropped)="onPhotoDropped($event)"
     >
       @for (url of photoUrls(); track url; let position = $index) {

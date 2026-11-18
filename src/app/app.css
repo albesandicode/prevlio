@@ -195,6 +195,13 @@
   border: none;
   background: transparent;
   cursor: pointer;
+  /* Same duration as the touch drag delay, so the photo is already small when the drag starts. */
+  transition: transform 300ms ease;
+}
+
+/* While the photo is held down, it shrinks before being dragged. */
+.photo-grid-button:active {
+  transform: scale(0.92);
 }
 
 .photo-check {
@@ -217,16 +224,31 @@
 
 /* Reordering photos by dragging */
 
+/* The copy that follows the finger. */
 .cdk-drag-preview {
   box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
-  opacity: 0.9;
+  cursor: grabbing;
 }
 
+/* The copy stays small while it is dragged... */
+.cdk-drag-preview .photo-grid-button {
+  transform: scale(0.92);
+}
+
+/* ...and grows back to its size while it slides into place on release. */
+.cdk-drag-preview.cdk-drag-animating .photo-grid-button {
+  transform: none;
+  transition-duration: 250ms;
+}
+
+/* The photo itself, dimmed, in the place where it will land. */
 .cdk-drag-placeholder {
-  opacity: 0.3;
+  opacity: 0.5;
+  outline: 2px dashed var(--color-primary);
+  outline-offset: -2px;
 }
 
-.cdk-drag-animating,
-.photo-grid.cdk-drop-list-dragging li:not(.cdk-drag-placeholder) {
+/* On release, the photo slides into its place instead of appearing at once. */
+.cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

@@ -4,6 +4,11 @@ import { PhotoStore } from './photo-store';
 
 type NoticeType = 'success' | 'error';
 
+interface GridPosition {
+  left: number;
+  top: number;
+}
+
 interface Notice {
   id: number;
   type: NoticeType;
@@ -19,6 +24,9 @@ interface Notice {
 export class App {
   private readonly photoStore = inject(PhotoStore);
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
+  private readonly photoGrid = viewChild<ElementRef<HTMLUListElement>>('photoGrid');
+  // Layout position of each grid item, used to animate the items the CDK moves while sorting.
+  private photoPositions = new Map<HTMLElement, GridPosition>();
   private nextNoticeId = 0;
   // Set when a drag starts so the click fired on release does not toggle the selection.
   private ignoreNextClick = false;
@@ -63,12 +71,45 @@ export class App {
 
   protected onPhotoDragStarted(): void {
     this.ignoreNextClick = true;
+    this.photoPositions = this.readPhotoPositions();
+  }
+
+  // In "mixed" orientation the CDK reorders the DOM instead of using transforms,
+  // so the items jump. Each moved item is animated from its old position to the new one.
+  protected onPhotoSorted(): void {
+    const newPositions = this.readPhotoPositions();
+
+    if (!prefersReducedMotion()) {
+      for (const [item, newPosition] of newPositions) {
+        const oldPosition = this.photoPositions.get(item);
+        if (oldPosition) {
+          slideFrom(item, oldPosition, newPosition);
+        }
+      }
+    }
+
+    this.photoPositions = newPositions;
   }
 
   protected onPhotoDropped(event: CdkDragDrop<string[]>): void {
     this.photoStore.moveInFeed(event.previousIndex, event.currentIndex);
     // If no click follows the release, stop ignoring clicks after this event loop turn.
     setTimeout(() => (this.ignoreNextClick = false));
+  }
+
+  // offsetLeft and offsetTop ignore running animations, so they give the final layout position.
+  private readPhotoPositions(): Map<HTMLElement, GridPosition> {
+    const positions = new Map<HTMLElement, GridPosition>();
+    const grid = this.photoGrid()?.nativeElement;
+
+    for (const item of Array.from(grid?.children ?? [])) {
+      // Items hidden by the CDK during the drag have no offsetParent and are skipped.
+      if (item instanceof HTMLElement && item.offsetParent) {
+        positions.set(item, { left: item.offsetLeft, top: item.offsetTop });
+      }
+    }
+
+    return positions;
   }
 
   protected toggleSelection(url: string): void {
@@ -105,6 +146,35 @@ export class App {
   private createNotice(type: NoticeType, message: string): Notice {
     return { id: this.nextNoticeId++, type, message };
   }
+}
+
+const SORT_ANIMATION_MS = 250;
+
+function slideFrom(item: HTMLElement, from: GridPosition, to: GridPosition): void {
+  const deltaX = from.left - to.left;
+  const deltaY = from.top - to.top;
+  if (deltaX === 0 && deltaY === 0) {
+    return;
+  }
+
+  // A photo that moves again while sliding starts a fresh animation instead of stacking two.
+  for (const running of item.getAnimations()) {
+    running.cancel();
+  }
+
+  // The CDK sorts by the element under the finger. While the photo slides under it,
+  // it must not count, or the CDK swaps the photos again and again.
+  item.style.pointerEvents = 'none';
+
+  const animation = item.animate(
+    [{ transform: `translate(${deltaX}px, ${deltaY}px)` }, { transform: 'translate(0, 0)' }],
+    { duration: SORT_ANIMATION_MS, easing: 'cubic-bezier(0, 0, 0.2, 1)' },
+  );
+  animation.onfinish = () => (item.style.pointerEvents = '');
+}
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 function addedMessage(count: number): string {
