@@ -22,7 +22,7 @@
   align-items: center;
   justify-content: space-between;
   min-height: var(--header-height);
-  padding: 0 var(--space-s) 0 var(--space-m);
+  padding: 0 var(--space-m);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -35,6 +35,16 @@
 .header-actions {
   display: flex;
   align-items: center;
+}
+
+/* Smaller than the empty state button so it fits in the header, but still easy to tap.
+   Both classes are used so these values win over .primary-button, defined further down. */
+.primary-button.header-add-button {
+  gap: 6px;
+  min-height: var(--tap-size);
+  margin-left: var(--space-s);
+  padding: 0 var(--space-m);
+  font-size: 0.875rem;
 }
 
 .icon-button {

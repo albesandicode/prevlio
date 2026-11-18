@@ -24,22 +24,19 @@
           </svg>
         </button>
       }
-      <button
-        type="button"
-        class="icon-button"
-        aria-label="Añadir fotos"
-        (click)="openFilePicker()"
-      >
+      <button type="button" class="primary-button header-add-button" (click)="openFilePicker()">
         <svg
-          class="icon"
+          class="icon-small"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
+          aria-hidden="true"
         >
           <path d="M12 5v14M5 12h14" />
         </svg>
+        Añadir fotos
       </button>
     </div>
   }
