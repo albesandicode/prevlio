@@ -67,3 +67,13 @@ Por qué: Destaca la acción principal en la pantalla vacía y permite añadir m
 Decisión: Variante A, en blanco y negro y fiel al boceto.
 
 Por qué: Es la que sigue mi guía minimalista.
+
+## Reordenar fotos (17-11-2026)
+
+Decisión: Las fotos se reordenan arrastrándolas (mantener pulsada y soltar en otro sitio), con el módulo de arrastrar del CDK de Angular (`@angular/cdk`). Es la primera librería nueva de Prevlio.
+
+Opciones: Arrastrar con el CDK, botones con flechas ← → que mueven la foto un puesto, y el arrastrar nativo del navegador. Descarto los botones porque parecen una chapuza, y el arrastrar nativo porque funciona mal con el dedo en el móvil.
+
+Por qué: Arrastrar es lo que espera el usuario y lo que hacen las apps de referencia. El CDK lo soporta en el móvil, también en cuadrícula, y es del propio equipo de Angular.
+
+Riesgo o pendiente: Una dependencia nueva que mantener y 2–3 conceptos nuevos. Hasta ahora la regla era "no uses librerías nuevas". Plan B: si el miércoles 18-11 a la 13:30 no funciona en el móvil, paso a los botones.librerías nuevas".

@@ -1,3 +1,4 @@
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { Injectable, computed, signal } from '@angular/core';
 
 export interface AddFilesResult {
@@ -51,6 +52,21 @@ export class PhotoStore {
     return removed.length;
   }
 
+  // Moves a photo using the positions shown in the feed (most recent first).
+  // Does nothing if the positions are equal or out of range.
+  moveInFeed(fromIndex: number, toIndex: number): void {
+    const total = this.photos().length;
+    if (fromIndex === toIndex || !isInRange(fromIndex, total) || !isInRange(toIndex, total)) {
+      return;
+    }
+
+    this.photos.update((photos) => {
+      const feed = [...photos].reverse();
+      moveItemInArray(feed, fromIndex, toIndex);
+      return feed.reverse();
+    });
+  }
+
   // Creates the URL only once per file so the <img> elements keep the same src.
   private urlFor(file: File): string {
     let url = this.photoUrls.get(file);
@@ -60,6 +76,10 @@ export class PhotoStore {
     }
     return url;
   }
+}
+
+function isInRange(index: number, total: number): boolean {
+  return Number.isInteger(index) && index >= 0 && index < total;
 }
 
 function isImage(file: File): boolean {

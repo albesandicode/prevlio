@@ -22,7 +22,7 @@
   align-items: center;
   justify-content: space-between;
   min-height: var(--header-height);
-  padding: 0 var(--space-s) 0 var(--space-m);
+  padding: 0 var(--space-m);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -35,6 +35,16 @@
 .header-actions {
   display: flex;
   align-items: center;
+}
+
+/* Smaller than the empty state button so it fits in the header, but still easy to tap.
+   Both classes are used so these values win over .primary-button, defined further down. */
+.primary-button.header-add-button {
+  gap: 6px;
+  min-height: var(--tap-size);
+  margin-left: var(--space-s);
+  padding: 0 var(--space-m);
+  font-size: 0.875rem;
 }
 
 .icon-button {
@@ -181,6 +191,10 @@
   width: 100%;
   aspect-ratio: 3 / 4;
   object-fit: cover;
+  /* Long press starts the drag, so the phone must not open its image menu or select it. */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .photo-grid-button {
@@ -191,6 +205,13 @@
   border: none;
   background: transparent;
   cursor: pointer;
+  /* Same duration as the touch drag delay, so the photo is already small when the drag starts. */
+  transition: transform 300ms ease;
+}
+
+/* While the photo is held down, it shrinks before being dragged. */
+.photo-grid-button:active {
+  transform: scale(0.92);
 }
 
 .photo-check {
@@ -209,4 +230,33 @@
   font-size: 0.875rem;
   font-weight: 700;
   line-height: 1;
+}
+
+/* Reordering photos by dragging */
+
+/* The copy that follows the finger. */
+.cdk-drag-preview {
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+  cursor: grabbing;
+}
+
+/* The copy stays small while it is dragged... */
+.cdk-drag-preview .photo-grid-button {
+  transform: scale(0.92);
+}
+
+/* ...and grows back to its size while it slides into place on release. */
+.cdk-drag-preview.cdk-drag-animating .photo-grid-button {
+  transform: none;
+  transition-duration: 250ms;
+}
+
+/* The photo itself, dimmed, in the place where it will land. */
+.cdk-drag-placeholder {
+  opacity: 0.5;
+}
+
+/* On release, the photo slides into its place instead of appearing at once. */
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
