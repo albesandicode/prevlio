@@ -254,8 +254,6 @@
 /* The photo itself, dimmed, in the place where it will land. */
 .cdk-drag-placeholder {
   opacity: 0.5;
-  outline: 2px dashed var(--color-primary);
-  outline-offset: -2px;
 }
 
 /* On release, the photo slides into its place instead of appearing at once. */
